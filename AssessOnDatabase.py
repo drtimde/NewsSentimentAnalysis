@@ -1,51 +1,70 @@
 import argparse
 import mysql.connector
 from MAIN import SENTI
-
+import traceback
 
 def updateAssessment(args):
 
     try:
-        db = mysql.connector.connect(user=args.username, password=args.password, port=args.port, host=args.host, database=args.schema)
+        db = mysql.connector.connect(user=args.username, password=args.password, port=args.port, host=args.host, database=args.schema, charset='utf8')
         cur = db.cursor()
     except Exception as e:
         print(e)
     else:
         print('successfully connect to the databse')
 
-    # query_op = 'SELECT id, title, subline FROM {} WHERE negative=-1'.format(table)
-    query_op = 'SELECT id, title, subline FROM {}'.format(args.table)
-    cur.execute(query_op)
-    list_of_news = cur.fetchall()
+    batch = 0
+    while True:
 
-    for line in list_of_news:
+        # get the (next batch of) candidates
+        query_op = 'SELECT id, title, subline FROM {} WHERE negative is NULL limit {}, {}'.format(args.table, batch * 100, (batch + 1) * 100)
+        # query_op = 'SELECT id, title, subline FROM {} WHERE negative=-1'.format(table)
+        cur.execute(query_op)
+        list_of_news = cur.fetchall()
+        print('got {} new lines '.format(len(list_of_news)))
 
-        try:
-            id, title, subline = line
+        if len(list_of_news) <=0:
+            break
 
-            sentiValueTitle = SENTI(title)
-            ReviewScoreTitle = sentiValueTitle.write2SentiValues()
+        for line in list_of_news:
 
-            sentiValueSubline = SENTI(subline)
-            ReviewScoreSubline = sentiValueSubline.write2SentiValues()
+            try:
+                id, title, subline = line
 
-            finalScore = ReviewScoreSubline + ReviewScoreTitle
+                # scoring title
+                if title is not None:
+                    sentiValueTitle = SENTI(title)
+                    ReviewScoreTitle = sentiValueTitle.write2SentiValues()
+                else:
+                    ReviewScoreTitle = 0
+                # scoring abstract
+                if subline is not None:
+                    sentiValueSubline = SENTI(subline)
+                    ReviewScoreSubline = sentiValueSubline.write2SentiValues()
+                else:
+                    ReviewScoreSubline = 0
 
-            if finalScore > 0:
-                prediction = 1
-            elif finalScore == 0:
-                prediction = 0
-            else:
-                prediction = 2
+                # combine the title and abstract scores
+                finalScore = ReviewScoreSubline + ReviewScoreTitle
 
-            update_op = 'UPDATE rslist3 SET negative={} WHERE id={}'.format(prediction, id)
-            cur.execute(update_op)
-            db.commit()
+                # transform the score into prediction
+                if finalScore > 0:
+                    prediction = 1
+                elif finalScore == 0:
+                    prediction = 0
+                else:
+                    prediction = 2
+                print('Record #{} predicted to be {} with score {} ({}+{})'.format(id, prediction, finalScore, ReviewScoreSubline, ReviewScoreTitle))
 
-        except Exception as e:
-            print(e)
-        else:
-            print('successfully update {}'.format(id))
+                # update table with prediction
+                update_op = 'UPDATE {} SET negative={} WHERE id={}'.format(args.table, prediction, id)
+                cur.execute(update_op)
+                db.commit()
+                print('Successfully updated {}'.format(id))
+                print("=======================")
+
+            except Exception as ex:
+                print(''.join(traceback.format_exception(etype=type(ex), value=ex, tb=ex.__traceback__)))
 
     print('successfully updated all')
 

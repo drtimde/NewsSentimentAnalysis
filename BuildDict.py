@@ -15,7 +15,7 @@ class sentiDictionary:
 
     def readWords(self, filePath):
         wordList = []
-        with open(filePath) as f:
+        with open(filePath, encoding='utf8') as f:
             for word in f.readlines():
                 wordList.append(word.strip('\n'))
         return (wordList)

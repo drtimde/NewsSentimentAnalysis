@@ -282,14 +282,15 @@ class SENTI:
                 for wordTuple in self.others:
                     sentiWords += (wordTuple[0]+u",")
                     sentiScore += wordTuple[1]
-                # print("OtherContent: "+sentiWords)
-                # print("OtherScore: {}".format(sentiScore))
+                print("OtherContent: "+sentiWords)
+                print("OtherScore: {}".format(sentiScore))
                 self.ReviewScore += sentiScore*self.othersWeight
 
                 self.AllWeights = self.AllWeights if self.AllWeights > 0 else 1
                 self.ReviewScore /= self.AllWeights
-            print("----------------------")
+
             print("ReviewScore: {}".format(self.ReviewScore))
+            print("----------------------")
             return self.ReviewScore
 
 

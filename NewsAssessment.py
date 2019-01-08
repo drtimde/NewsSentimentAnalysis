@@ -6,12 +6,12 @@ sentiment_examples_path = '/Users/vincent/Desktop/Mini_Job/Semantics/sentiment_e
 res_path = '/Users/vincent/Desktop/Mini_Job/Semantics/res_{}.csv'.format(date)
 
 
-with open(res_path, 'w', newline='') as dmp:
+with open(res_path, 'w', newline='', encoding='utf8') as dmp:
     fieldnames = ['id', 'title', 'ReviewScoreTitle', 'subline', 'ReviewScoreSubline', 'finalScore', 'negative', 'prediction']
     writer = csv.DictWriter(dmp, fieldnames=fieldnames)
     writer.writeheader()
 
-    with open(sentiment_examples_path, 'r', newline='') as df:
+    with open(sentiment_examples_path, 'r', newline='', encoding='utf8') as df:
         reader = csv.reader(df)
 
         headers = next(reader)
