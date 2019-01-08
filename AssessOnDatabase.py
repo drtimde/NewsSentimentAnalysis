@@ -17,7 +17,7 @@ def updateAssessment(args):
     while True:
 
         # get the (next batch of) candidates
-        query_op = 'SELECT id, title, subline FROM {} WHERE negative is NULL limit {}, {}'.format(args.table, batch * 100, (batch + 1) * 100)
+        query_op = 'SELECT id, title, subline FROM {} WHERE negative is NULL ORDER BY id DESC LIMIT {}, {}'.format(args.table, batch * 100, (batch + 1) * 100)
         # query_op = 'SELECT id, title, subline FROM {} WHERE negative=-1'.format(table)
         cur.execute(query_op)
         list_of_news = cur.fetchall()
