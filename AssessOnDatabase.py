@@ -48,7 +48,7 @@ def updateAssessment(args):
                 finalScore = ReviewScoreSubline + ReviewScoreTitle
 
                 # transform the score into prediction
-                if finalScore > 20:
+                if finalScore > 10:
                     prediction = 1 # positive
                 elif finalScore < -1:
                     prediction = 2 # negative
