@@ -48,12 +48,13 @@ def updateAssessment(args):
                 finalScore = ReviewScoreSubline + ReviewScoreTitle
 
                 # transform the score into prediction
-                if finalScore > 0:
-                    prediction = 1
-                elif finalScore == 0:
-                    prediction = 0
+                if finalScore > 10:
+                    prediction = 1 # positive
+                elif finalScore < -1:
+                    prediction = 2 # negative
                 else:
-                    prediction = 2
+                    prediction = 0 # neutral
+
                 print('Record #{} predicted to be {} with score {} ({}+{})'.format(id, prediction, finalScore, ReviewScoreSubline, ReviewScoreTitle))
 
                 # update table with prediction
