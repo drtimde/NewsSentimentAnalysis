@@ -17,7 +17,7 @@ def updateAssessment(args):
     while True:
 
         # get the (next batch of) candidates
-        query_op = 'SELECT id, title, subline FROM {} WHERE negative is NULL ORDER BY id DESC LIMIT {}, {}'.format(args.table, batch * 100, (batch + 1) * 100)
+        query_op = 'SELECT id, title, subline FROM {} WHERE isnegative is NULL {} ORDER BY id {} LIMIT {}, {}'.format(args.table, ('AND negative is NULL ' if args.incremental[0].upper()=='Y' else ''), ('DESC' if args.backwards[0].upper()=='Y' else ''), batch * 100, (batch + 1) * 100)
         # query_op = 'SELECT id, title, subline FROM {} WHERE negative=-1'.format(table)
         cur.execute(query_op)
         list_of_news = cur.fetchall()
@@ -48,7 +48,7 @@ def updateAssessment(args):
                 finalScore = ReviewScoreSubline + ReviewScoreTitle
 
                 # transform the score into prediction
-                if finalScore > 10:
+                if finalScore > 20:
                     prediction = 1 # positive
                 elif finalScore < -1:
                     prediction = 2 # negative
@@ -78,6 +78,8 @@ if __name__ == '__main__':
     parser.add_argument('--port', type=str, default='3306', help='port to access the database')
     parser.add_argument('--schema', type=str, default='spider', help='schema to access the database')
     parser.add_argument('--table', type=str, default='rslist3', help='table to be updated')
+    parser.add_argument('--backwards', type=str, default='Yes', help='working forwards or backwards in the database table')
+    parser.add_argument('--incremental', type=str, default='Yes', help='working incrementally (new records only) or complete (all records) in the database table')
 
     args = parser.parse_args()
 
