@@ -165,6 +165,8 @@ class SENTI:
 
     def write2SentiValues(self):
         if(self.sentiCalculation()):
+            wordsCount = 0
+
             #quality
             if(self.quality != []):
                 sentiWords = u""
@@ -172,6 +174,7 @@ class SENTI:
                 for wordTuple in self.quality:
                     sentiWords += (wordTuple[0]+u",")
                     sentiScore += wordTuple[1]
+                    wordsCount = wordsCount + 1
                 print("QualityContent: "+sentiWords)
                 print("QualityScore: {}".format(sentiScore))
                 self.ReviewScore += sentiScore*self.qualityWeight
@@ -183,6 +186,7 @@ class SENTI:
                 for wordTuple in self.color:
                     sentiWords += (wordTuple[0]+u",")
                     sentiScore += wordTuple[1]
+                    wordsCount = wordsCount + 1
                 print("ColorContent: "+sentiWords)
                 print("ColorScore: {}".format(sentiScore))
                 self.ReviewScore += sentiScore*self.colorWeight
@@ -194,6 +198,7 @@ class SENTI:
                 for wordTuple in self.material:
                     sentiWords += (wordTuple[0]+u",")
                     sentiScore += wordTuple[1]
+                    wordsCount = wordsCount + 1
                 print("MaterialContent: "+sentiWords)
                 print("MaterialScore: {}".format(sentiScore))
                 self.ReviewScore += sentiScore*self.materialWeight
@@ -205,6 +210,7 @@ class SENTI:
                 for wordTuple in self.style:
                     sentiWords += (wordTuple[0]+u",")
                     sentiScore += wordTuple[1]
+                    wordsCount = wordsCount + 1
                 print("StyleContent: "+sentiWords)
                 print("StyleScore: {}".format(sentiScore))
                 self.ReviewScore += sentiScore*self.styleWeight
@@ -216,6 +222,7 @@ class SENTI:
                 for wordTuple in self.function:
                     sentiWords += (wordTuple[0]+u",")
                     sentiScore += wordTuple[1]
+                    wordsCount = wordsCount + 1
                 print("FunctionContent: "+sentiWords)
                 print("FunctionScore: {}".format(sentiScore))
                 self.ReviewScore += sentiScore*self.functionWeight
@@ -238,6 +245,7 @@ class SENTI:
                 for wordTuple in self.price:
                     sentiWords += (wordTuple[0]+u",")
                     sentiScore += wordTuple[1]
+                    wordsCount = wordsCount + 1
                 print("PriceContent: "+sentiWords)
                 print("PriceScore: {}".format(sentiScore))
                 self.ReviewScore += sentiScore*self.priceWeight
@@ -249,6 +257,7 @@ class SENTI:
                 for wordTuple in self.service:
                     sentiWords += (wordTuple[0]+u",")
                     sentiScore += wordTuple[1]
+                    wordsCount = wordsCount + 1
                 print("ServiceContent: "+sentiWords)
                 print("ServiceScore: {}".format(sentiScore))
                 self.ReviewScore += sentiScore*self.serviceWeight
@@ -260,6 +269,7 @@ class SENTI:
                 for wordTuple in self.logistic:
                     sentiWords += (wordTuple[0]+u",")
                     sentiScore += wordTuple[1]
+                    wordsCount = wordsCount + 1
                 print("LogisticContent: "+sentiWords)
                 print("LogisticScore: {}".format(sentiScore))
                 self.ReviewScore += sentiScore*self.logisticWeight
@@ -271,6 +281,7 @@ class SENTI:
                 for wordTuple in self.description:
                     sentiWords += (wordTuple[0]+u",")
                     sentiScore += wordTuple[1]
+                    wordsCount = wordsCount + 1
                 print("DescriptionContent: "+sentiWords)
                 print("DescriptionScore: {}".format(sentiScore))
                 self.ReviewScore += sentiScore*self.descriptionWeight
@@ -282,12 +293,13 @@ class SENTI:
                 for wordTuple in self.others:
                     sentiWords += (wordTuple[0]+u",")
                     sentiScore += wordTuple[1]
+                    wordsCount = wordsCount + 1
                 print("OtherContent: "+sentiWords)
                 print("OtherScore: {}".format(sentiScore))
                 self.ReviewScore += sentiScore*self.othersWeight
 
                 self.AllWeights = self.AllWeights if self.AllWeights > 0 else 1
-                self.ReviewScore /= self.AllWeights
+                self.ReviewScore /= (self.AllWeights * (wordsCount if wordsCount > 0  else 1))
 
             print("ReviewScore: {}".format(self.ReviewScore))
             print("----------------------")
